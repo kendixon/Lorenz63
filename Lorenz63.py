@@ -49,9 +49,17 @@ class Lorenz63(object):
         """
         for i in range(n):
             self._solver()
-            self._history['time'].append(self._t)
-            self._history['state'] = np.vstack([self._history['state'],
-                                     np.array([self._x, self._y, self._z])])
+            self._save_state()
+
+    def update_state(self, x, y, z):
+        """
+        Update state to posterior and save time and updated state to history so
+        they can be retrieved later. 
+        """
+        self._x = x
+        self._y = y
+        self._z = z
+        self._save_state()
 
     def get_history(self):
         """
@@ -59,6 +67,23 @@ class Lorenz63(object):
         states (x, y, z)
         """
         return self._history
+
+    def get_current_state(self):
+        """
+        Return the current time and state
+        """
+        return self._t, self._x, self._y, self._z
+
+    ############################################################################
+    # Solvers (Time-Differencing)
+    ############################################################################
+    def _save_state(self):
+        """
+        Save time and state to history
+        """
+        self._history['time'].append(self._t)
+        self._history['state'] = np.vstack([self._history['state'],
+                                 np.array([self._x, self._y, self._z])])
 
     ############################################################################
     # Solvers (Time-Differencing)
